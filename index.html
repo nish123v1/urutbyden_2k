@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urut Pro Mobile - Booking</title>
+    <style>
+        /* Design Dark Mode & Minimalist */
+        body {
+            background-color: #0f172a;
+            color: #f8fafc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .card {
+            background-color: #1e293b;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            border: 1px solid #334155;
+        }
+
+        h2 {
+            text-align: center;
+            color: #38bdf8;
+            margin-bottom: 5px;
+        }
+
+        p.subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #94a3b8;
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+            color: #cbd5e1;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            border: 1px solid #475569;
+            background-color: #0f172a;
+            color: white;
+            box-sizing: border-box;
+            font-size: 1rem;
+        }
+
+        button {
+            width: 100%;
+            padding: 15px;
+            border-radius: 8px;
+            border: none;
+            background: linear-gradient(45deg, #0ea5e9, #2563eb);
+            color: white;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 0.8rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Urut Pro Mobile 💆‍♂️</h2>
+    <p class="subtitle">Sistem Tempahan Urut Kawasan Pekan</p>
+
+    <form id="bookingForm">
+        <label>Nama Pelanggan:</label>
+        <input type="text" id="nama" placeholder="Masukkan nama awak" required>
+
+        <label>Jenis Urutan:</label>
+        <select id="servis">
+            <option value="Urut Badan (1 Jam)">Urut Badan (1 Jam)</option>
+            <option value="Urut Kaki / Reflexology">Urut Kaki / Reflexology</option>
+            <option value="Urut Saraf / Tradisional">Urut Saraf / Tradisional</option>
+            <option value="Pakej Combo (Badan + Kaki)">Pakej Combo (Badan + Kaki)</option>
+        </select>
+
+        <label>Tarikh:</label>
+        <input type="date" id="tarikh" required>
+
+        <label>Jam:</label>
+        <input type="time" id="masa" required>
+
+        <button type="submit">Hantar Tempahan ke WhatsApp</button>
+    </form>
+
+    <div class="footer">
+        Powered by NishTech Dev
+    </div>
+</div>
+
+<script>
+    document.getElementById('bookingForm').addEventListener('submit', function(e) {
+        e.preventDefault();
+
+        // 1. Ambil data dari input
+        const nama = document.getElementById('nama').value;
+        const servis = document.getElementById('servis').value;
+        const tarikh = document.getElementById('tarikh').value;
+        const masa = document.getElementById('masa').value;
+        
+        // 2. No Phone Awak (Pastikan mula dengan 60)
+        // Ganti no phone kat bawah ni dengan no awak yang betul!
+        const noPhone = "601118680063"; 
+
+        // 3. Susun ayat mesej
+        const mesej = `*TEMPAHAN URUT BARU*%0A` +
+                      `----------------------------%0A` +
+                      `*Nama:* ${nama}%0A` +
+                      `*Servis:* ${servis}%0A` +
+                      `*Tarikh:* ${tarikh}%0A` +
+                      `*Masa:* ${masa}%0A` +
+                      `----------------------------%0A` +
+                      `Mohon bos confirmkan slot ni ya!`;
+
+        // 4. Link WhatsApp
+        const urlWhatsApp = `https://wa.me/${noPhone}?text=${mesej}`;
+
+        // 5. Buka WhatsApp
+        window.open(urlWhatsApp, '_blank');
+        
+        alert("Sila klik 'Send' di WhatsApp untuk hantar detail tempahan!");
+    });
+</script>
+
+</body>
+</html>
