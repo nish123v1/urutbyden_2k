@@ -66,7 +66,10 @@
 
         // --- KONFIGURASI WHATSAPP ---
         const noWhatsApp = "601118680063"; // Ganti no phone awak/kawan
-        const mesejWA = `*TEMPAHAN URUT*%0A%0ANama: ${nama}%0AServis: ${servis}%0A%0A*Saya dah scan QR, ini resitnya:*`;
+        const mesejWA = `*TEMPAHAN URUT*\n\n` +
+                 `Nama: ${nama}\n` +
+                 `Servis: ${servis}\n\n` +
+                 `*Saya dah scan QR, ini resitnya:*`;
         
         const urlWA = `https://wa.me/${noWhatsApp}?text=${encodeURIComponent(mesejWA)}`;
         
