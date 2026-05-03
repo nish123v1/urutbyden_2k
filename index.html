@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ms">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Urut Pro + TeleBot</title>
+    <style>
+        body { background-color: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
+        .card { background: #1e293b; padding: 25px; border-radius: 20px; width: 90%; max-width: 380px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        h2 { color: #38bdf8; text-align: center; margin-bottom: 20px; }
+        label { font-size: 0.8rem; color: #94a3b8; }
+        input, select { width: 100%; padding: 12px; margin: 8px 0 18px 0; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
+        button { width: 100%; padding: 15px; border-radius: 10px; border: none; background: linear-gradient(45deg, #0ea5e9, #2563eb); color: white; font-weight: bold; cursor: pointer; }
+        .qr-box { display: none; background: white; color: black; padding: 15px; border-radius: 15px; text-align: center; margin-top: 15px; }
+        img { width: 150px; margin: 10px 0; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h2>Urut Pro V2 💆‍♂️</h2>
+    <form id="bookingForm">
+        <label>Nama Anda:</label>
+        <input type="text" id="nama" placeholder="Cth: Ali" required>
+        
+        <label>Pilih Servis:</label>
+        <select id="servis">
+            <option value="Urut Badan">Urut Badan (1 Jam)</option>
+            <option value="Urut Kaki">Urut Kaki</option>
+            <option value="Urut Saraf">Urut Saraf</option>
+        </select>
+
+        <button type="button" onclick="prosesBayaran()">Seterusnya (Bayaran)</button>
+
+        <div id="qrSection" class="qr-box">
+            <p style="font-weight: bold; margin: 0;">Scan & Bayar Di Sini:</p>
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DUITNOW_QR_SAMPEL" alt="QR Payment">
+            <p style="font-size: 0.7rem; color: #666;">Lepas bayar, klik butang bawah untuk hantar resit.</p>
+            <button type="submit" style="background: #25D366;">Hantar ke WhatsApp</button>
+        </div>
+    </form>
+</div>
+
+<script>
+    function prosesBayaran() {
+        const nama = document.getElementById('nama').value;
+        if(nama === "") { alert("Isi nama dulu bos!"); return; }
+        document.getElementById('qrSection').style.display = "block";
+    }
+
+    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+
+        const nama = document.getElementById('nama').value;
+        const servis = document.getElementById('servis').value;
+
+        // --- KONFIGURASI TELEGRAM (INJECT KAT SINI) ---
+        const teleToken = "8396430785:AAG1DUGVI-auSw9sGsCD_fxZMP832VJn5Ko"; 
+        const chatId = "8396430785:AAG1DUGVI-auSw9sGsCD_fxZMP832VJn5Ko";
+        
+        // Ayat untuk log Telegram
+        const textTele = `🚀 *BOOKING BARU*%0A Nama: ${nama}%0A Servis: ${servis}%0A Status: Menunggu Resit`;
+
+        // Hantar ke Telegram (Background proses)
+        fetch(`https://api.telegram.org/bot${teleToken}/sendMessage?chat_id=${chatId}&text=${textTele}&parse_mode=Markdown`);
+
+        // --- KONFIGURASI WHATSAPP ---
+        const noWhatsApp = "601118680063"; // Ganti no phone awak/kawan
+        const mesejWA = `*TEMPAHAN URUT*%0A%0ANama: ${nama}%0AServis: ${servis}%0A%0A*Saya dah scan QR, ini resitnya:*`;
+        
+        const urlWA = `https://wa.me/${noWhatsApp}?text=${encodeURIComponent(mesejWA)}`;
+        
+        // Buka WhatsApp
+        window.open(urlWA, '_blank');
+        alert("Data direkod! Sila hantar resit di WhatsApp.");
+    });
+</script>
+
+</body>
+</html>
+
+
