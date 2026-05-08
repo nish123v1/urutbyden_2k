@@ -3,279 +3,167 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UrutPro - Booking System</title>
+    <title>UrutPro - Premium Mobile Booking</title>
     
     <style>
-        :root { --primary: #27ae60; --dark: #2c3e50; --danger: #e74c3c; --warning: #f39c12; }
+        /* --- CSS PREMIMUM INTERNASIONAL --- */
+        :root {
+            /* Palette warna premium: Hijau Emerald, Kelabu Gelap, & Emas Lembut */
+            --primary: #059669; /* Hijau Emerald */
+            --primary-hover: #047857;
+            --dark: #111827; /* Near black untuk font */
+            --bg-body: #f3f4f6; /* Kelabu sangat muda untuk background */
+            --shadow-card: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            --text-main: #374151;
+            --border-ui: #e5e7eb;
+        }
         
-        /* Reset universal supaya tak terkeluar garisan */
         * { box-sizing: border-box; }
 
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #eef2f3; padding: 15px; color: #333; }
+        body { 
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            background-color: var(--bg-body);
+            padding: 15px; 
+            color: var(--text-main); 
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            line-height: 1.5;
+        }
         
         .container { 
-            max-width: 450px; 
-            width: 95%; /* Supaya ada ruang kat tepi skrin phone */
-            background: #fff; 
-            padding: 25px; 
-            border-radius: 15px; 
-            margin: 20px auto; 
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1); 
+            max-width: 420px; 
+            width: 100%; 
+            background: #ffffff; 
+            padding: 30px; 
+            border-radius: 20px; 
+            box-shadow: var(--shadow-card); 
+            transition: transform 0.2s ease;
         }
 
-        h2 { text-align: center; color: var(--dark); margin-bottom: 5px; }
+        /* Tajuk utama lebih premium (tidak bold sangat, spacing luas) */
+        h2 { 
+            text-align: center; 
+            color: var(--dark); 
+            margin-top: 0;
+            margin-bottom: 10px; 
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            font-size: 1.8em;
+        }
         
+        /* Baki Slot Card (Nampak premium, soft background) */
         .slot-info { 
             text-align: center; 
-            font-weight: bold; 
+            font-weight: 600; 
             color: var(--primary); 
-            margin-bottom: 20px; 
-            background: #ebf5ee; 
-            padding: 10px; 
-            border-radius: 10px;
+            margin-bottom: 25px; 
+            background: #ecfdf5; 
+            padding: 12px; 
+            border-radius: 12px;
+            font-size: 0.95em;
+            border: 1px solid #d1fae5;
         }
         
-        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 0.9em; }
+        label { 
+            display: block; 
+            margin-bottom: 8px; 
+            font-weight: 500; 
+            font-size: 0.85em; 
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
         
-        input, select, button { 
+        /* Input & Select lebih bersih (tanpa border hitam pekat) */
+        input, select { 
             width: 100%; 
-            padding: 12px; 
-            margin-bottom: 15px; 
-            border: 1px solid #ddd; 
-            border-radius: 10px; 
+            padding: 14px 16px; 
+            margin-bottom: 18px; 
+            border: 1px solid var(--border-ui); 
+            border-radius: 12px; 
             font-size: 16px; 
             outline: none;
-            display: block; /* Pastikan dia duduk dalam baris sendiri */
+            display: block; 
+            color: var(--text-main);
+            background: #fdfdfd;
+            transition: border-color 0.2s, box-shadow 0.2s;
         }
         
-        input:focus { border-color: var(--primary); }
+        input:focus, select:focus { 
+            border-color: #a7f3d0;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+        }
         
+        /* Butang Tempah Utama (Bold tapi rounded lembut) */
         button { 
+            width: 100%; 
+            padding: 16px; 
+            margin-bottom: 15px; 
+            border: 1px solid transparent; 
+            border-radius: 12px; 
+            font-size: 16px; 
+            display: block;
             background: var(--primary); 
             color: white; 
-            border: none; 
-            font-weight: bold; 
+            font-weight: 600; 
             cursor: pointer; 
-            transition: 0.3s;
+            transition: background 0.2s, transform 0.1s;
         }
 
-        button:hover { opacity: 0.9; }
-        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+        button:hover { background: var(--primary-hover); }
+        button:active { transform: scale(0.98); }
+        button:disabled { background: #d1d5db; cursor: not-allowed; opacity: 0.7; }
 
-        /* Admin Section */
-        .admin-panel { display: none; margin-top: 30px; border-top: 2px dashed #ddd; padding-top: 20px; }
-        .booking-card { 
-            background: #f8f9fa; 
-            border-left: 8px solid var(--warning); 
-            padding: 15px; 
-            margin-bottom: 10px; 
-            border-radius: 8px;
-            font-size: 0.9em;
-        }
-        .booking-card.status-dah { border-left-color: var(--primary); }
+        /* --- ADMIN SECTION STYLES (Clean & Structured) --- */
+        .admin-panel { display: none; margin-top: 35px; border-top: 1px solid #eee; padding-top: 25px; }
+        .admin-panel h3 { text-align: center; color: var(--dark); margin-top: 0; font-weight: 600; }
         
+        .booking-card { 
+            background: #fff; 
+            border: 1px solid var(--border-ui);
+            padding: 18px; 
+            margin-bottom: 12px; 
+            border-radius: 12px;
+            font-size: 0.9em;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        
+        /* Indikator Status di Tepi Kiri (Minimalis) */
+        .card-details { border-left: 4px solid #f97316; padding-left: 15px; } /* Default Belum Bayar (Oren) */
+        .booking-card.status-dah .card-details { border-left-color: var(--primary); }
+        
+        .card-client-info { color: var(--text-main); }
+        .card-meta { font-size: 0.8em; color: #9ca3af; margin-top: 4px; }
+        
+        /* Badge Status (Premium tags) */
         .badge { 
             font-size: 0.7em; 
-            padding: 3px 8px; 
-            border-radius: 5px; 
+            padding: 4px 10px; 
+            border-radius: 20px; 
             color: white; 
-            float: right; 
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .bg-warning { background: var(--warning); }
+        .bg-warning { background: #f97316; } /* Oren Premium */
         .bg-success { background: var(--primary); }
 
         .btn-confirm { 
-            background: var(--dark); 
-            font-size: 12px; 
-            padding: 8px; 
-            margin-top: 10px; 
+            background: #fff; 
+            color: var(--primary);
+            border: 1px solid var(--primary);
+            font-size: 11px; 
+            padding: 6px 12px; 
+            margin-top: 8px; 
             width: auto; 
-            display: inline-block; 
+            display: inline-block;
+            border-radius: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .reset-btn { background: var(--danger); }
-    </style>
-</head>
-<body>
-
-<div class="container" id="mainWrapper">
-    <div id="bookingForm">
-        <h2>Urut & Bekam Pro</h2>
-        <div class="slot-info">Baki Slot (Sah): <span id="bakiSlot">...</span></div>
-        
-        <label>Nama Anda:</label>
-        <input type="text" id="nama" placeholder="Taip nama / kod rahsia">
-
-        <label>Pilih Servis:</label>
-        <select id="servis">
-            <option value="Urut Badan">Urut Badan</option>
-            <option value="Bekam Sunnah">Bekam Sunnah</option>
-            <option value="Pakej Urut+Bekam">Pakej Urut+Bekam</option>
-        </select>
-
-        <label>Pilih Waktu (Slot Tersedia):</label>
-        <select id="slotMasa">
-            </select>
-
-        <button id="btnTempah" onclick="prosesTempahan()">Tempah & WhatsApp</button>
-    </div>
-
-    <div class="admin-panel" id="adminBox">
-        <h3 style="text-align:center;">🛡️ Admin Dashboard</h3>
-        
-        <div id="loginAdmin">
-            <input type="password" id="passInput" placeholder="Password Admin">
-            <button onclick="checkAdmin()" style="background:var(--dark);">Login Admin</button>
-        </div>
-
-        <div id="adminContent" style="display:none;">
-            <p><strong>Senarai Tempahan Hari Ini:</strong></p>
-            <div id="senaraiNama">Memuatkan data...</div>
-            <button class="reset-btn" onclick="resetSistem()">Reset Semua Data</button>
-            <button onclick="location.reload()" style="background:#95a5a6; margin-top:10px;">Logout</button>
-        </div>
-    </div>
-</div>
-
-<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
-
-<script>
-    // 1. CONFIG FIREBASE (Guna config asal kau)
-    const firebaseConfig = {
-        apiKey: "AIzaSyBnP56js1YcyNg61XCnJ93aVUB0JaGonEo",
-        authDomain: "urutpro-239355.firebaseapp.com",
-        projectId: "urutpro-239355",
-        storageBucket: "urutpro-239355.appspot.com",
-        messagingSenderId: "473336835724",
-        appId: "1:473336835724:web:348a6490b0051d278fd5a9",
-        databaseURL: "https://urutpro-239355-default-rtdb.asia-southeast1.firebasedatabase.app"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // Senarai masa yang kau tawarkan
-    const senaraiMasaAsal = ["02:00 PM", "05:00 PM", "08:00 PM", "10:00 PM", "12:00 AM"];
-
-    // 2. MONITOR SLOT & MASA (REAL-TIME)
-    db.ref('tempahan').on('value', (snapshot) => {
-        const data = snapshot.val();
-        let masaDahSah = [];
-        let jumlahDahBayar = 0;
-
-        if (data) {
-            Object.values(data).forEach(t => {
-                if (t.status === "Dah Bayar") {
-                    masaDahSah.push(t.masa);
-                    jumlahDahBayar++;
-                }
-            });
-        }
-
-        // Update baki slot
-        const baki = 5 - jumlahDahBayar;
-        document.getElementById('bakiSlot').innerText = baki + "/5";
-
-        // Update dropdown masa (Hanya tunjuk yang belum kena "Confirm Bayar")
-        const selectMasa = document.getElementById('slotMasa');
-        selectMasa.innerHTML = "";
-        
-        senaraiMasaAsal.forEach(m => {
-            if (!masaDahSah.includes(m)) {
-                let opt = document.createElement('option');
-                opt.value = m;
-                opt.innerText = m;
-                selectMasa.appendChild(opt);
-            }
-        });
-
-        // Kalau slot penuh
-        if (baki <= 0) {
-            document.getElementById('btnTempah').disabled = true;
-            document.getElementById('btnTempah').innerText = "Slot Penuh";
-        } else {
-            document.getElementById('btnTempah').disabled = false;
-            document.getElementById('btnTempah').innerText = "Tempah & WhatsApp";
-        }
-    });
-
-    // 3. FUNGSI TEMPAH
-    function prosesTempahan() {
-        const nama = document.getElementById('nama').value.trim();
-        const noWA = "601118680063"; // Nombor kawan kau
-
-        if (nama.toLowerCase() === "adminpro") {
-            document.getElementById('adminBox').style.display = "block";
-            document.getElementById('adminBox').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('nama').value = "";
-            return;
-        }
-
-        if (!nama) return alert("Sila isi nama anda!");
-        const masaDipilih = document.getElementById('slotMasa').value;
-        if (!masaDipilih) return alert("Tiada slot masa tersedia!");
-
-        const info = {
-            nama: nama,
-            servis: document.getElementById('servis').value,
-            masa: masaDipilih,
-            status: "Belum Bayar",
-            waktu: new Date().toLocaleString()
-        };
-
-        db.ref('tempahan').push(info).then(() => {
-            const mesej = `Salam, saya ${nama}. Dah booking ${info.servis} pukul ${info.masa}. Macam mana nak bayar?`;
-            window.open(`https://wa.me/${noWA}?text=${encodeURIComponent(mesej)}`, '_blank');
-            location.reload();
-        });
-    }
-
-    // 4. FUNGSI ADMIN
-    function checkAdmin() {
-        if (document.getElementById('passInput').value === "admin123") {
-            document.getElementById('loginAdmin').style.display = "none";
-            document.getElementById('adminContent').style.display = "block";
-            loadAdminList();
-        } else {
-            alert("Password Salah!");
-        }
-    }
-
-    function loadAdminList() {
-        db.ref('tempahan').on('value', (snap) => {
-            const data = snap.val();
-            let html = "";
-            if (data) {
-                Object.keys(data).reverse().forEach(id => {
-                    const t = data[id];
-                    const isDah = t.status === "Dah Bayar";
-                    html += `
-                        <div class="booking-card ${isDah ? 'status-dah' : ''}">
-                            <span class="badge ${isDah ? 'bg-success' : 'bg-warning'}">${t.status}</span>
-                            <strong>${t.nama}</strong><br>
-                            ${t.servis} | ${t.masa}<br>
-                            ${!isDah ? `<button class="btn-confirm" onclick="confirmBayar('${id}')">Confirm Bayar ✅</button>` : ''}
-                        </div>`;
-                });
-            } else {
-                html = "Tiada tempahan.";
-            }
-            document.getElementById('senaraiNama').innerHTML = html;
-        });
-    }
-
-    function confirmBayar(id) {
-        if(confirm("Sahkan pembayaran? Slot akan ditolak.")) {
-            db.ref('tempahan/' + id).update({ status: "Dah Bayar" });
-        }
-    }
-
-    function resetSistem() {
-        if(confirm("Padam semua data semalam?")) {
-            db.ref('tempahan').remove().then(() => location.reload());
-        }
-    }
-</script>
-</body>
-</html>
+        .btn-confirm:hover { background: #ecfdf5; }
