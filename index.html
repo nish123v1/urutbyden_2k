@@ -3,83 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Urut Pro + TeleBot</title>
+    <title>UrutPro - Booking System</title>
+    
     <style>
-        body { background-color: #0f172a; color: white; font-family: 'Segoe UI', sans-serif; display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; }
-        .card { background: #1e293b; padding: 25px; border-radius: 20px; width: 90%; max-width: 380px; border: 1px solid #334155; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
-        h2 { color: #38bdf8; text-align: center; margin-bottom: 20px; }
-        label { font-size: 0.8rem; color: #94a3b8; }
-        input, select { width: 100%; padding: 12px; margin: 8px 0 18px 0; border-radius: 10px; border: 1px solid #334155; background: #0f172a; color: white; box-sizing: border-box; }
-        button { width: 100%; padding: 15px; border-radius: 10px; border: none; background: linear-gradient(45deg, #0ea5e9, #2563eb); color: white; font-weight: bold; cursor: pointer; }
-        .qr-box { display: none; background: white; color: black; padding: 15px; border-radius: 15px; text-align: center; margin-top: 15px; }
-        img { width: 150px; margin: 10px 0; }
+        /* --- CSS ASAL & MODIFIKASI --- */
+        body { font-family: sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 400px; background: #fff; padding: 20px; border-radius: 10px; margin: auto; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #2c3e50; }
+        label { display: block; margin-bottom: 5px; font-weight: bold; }
+        input, select, button { width: 100%; padding: 12px; margin-bottom: 15px; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        
+        button { background: #27ae60; color: white; border: none; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { background: #219150; }
+        button:disabled { background: #bdc3c7; cursor: not-allowed; }
+
+        /* Gaya Loading Spinner */
+        .spinner { display: none; width: 20px; height: 20px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s ease-in-out infinite; margin-left: 10px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .btn-loading { display: flex; align-items: center; justify-content: center; opacity: 0.8; }
+
+        /* Admin Panel (Hidden by default) */
+        .admin-panel { display: none; margin-top: 30px; padding: 15px; border-top: 2px dashed #ccc; background: #f9f9f9; }
+        .reset-btn { background: #e74c3c; margin-top: 10px; }
+        .booking-list { text-align: left; background: #fff; padding: 10px; border: 1px solid #ddd; border-radius: 5px; font-size: 14px; }
     </style>
 </head>
 <body>
 
-<div class="card">
-    <h2>Urut Pro V2 💆‍♂️</h2>
-    <form id="bookingForm">
-        <label>Nama Anda:</label>
-        <input type="text" id="nama" placeholder="Cth: Ali" required>
-        
-        <label>Pilih Servis:</label>
-        <select id="servis">
-            <option value="Urut Badan">Urut Badan (1 Jam)</option>
-            <option value="Urut Kaki">Urut Kaki</option>
-            <option value="Urut Saraf">Urut Saraf</option>
-        </select>
+<div class="container" id="bookingForm">
+    <h2>Tempahan Urut & Bekam</h2>
+    
+    <label>Nama Anda:</label>
+    <input type="text" id="nama" placeholder="Masukkan nama penuh">
 
-        <button type="button" onclick="prosesBayaran()">Seterusnya (Bayaran)</button>
+    <label>Jenis Servis:</label>
+    <select id="servis">
+        <option value="Urut Belikat">Urut Belikat</option>
+        <option value="Bekam Sunnah">Bekam Sunnah</option>
+        <option value="Pakej Urut + Bekam">Pakej Urut + Bekam</option>
+        <option value="Urut Tangan">Urut Tangan</option>
+    </select>
 
-        <div id="qrSection" class="qr-box">
-            <p style="font-weight: bold; margin: 0;">Scan & Bayar Di Sini:</p>
-            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=DUITNOW_QR_SAMPEL" alt="QR Payment">
-            <p style="font-size: 0.7rem; color: #666;">Lepas bayar, klik butang bawah untuk hantar resit.</p>
-            <button type="submit" style="background: #25D366;">Hantar ke WhatsApp</button>
-        </div>
-    </form>
+    <label>Pilih Waktu:</label>
+    <select id="slotMasa">
+        <option value="02:00 PM - 04:00 PM">02:00 PM - 04:00 PM</option>
+        <option value="05:00 PM - 07:00 PM">05:00 PM - 07:00 PM</option>
+        <option value="08:00 PM - 10:00 PM">08:00 PM - 10:00 PM</option>
+        <option value="10:00 PM - 12:00 AM">10:00 PM - 12:00 AM</option>
+    </select>
+
+    <button id="btnTempah" onclick="prosesTempahan()">
+        <span id="btnText">Tempah Sekarang (WhatsApp)</span>
+        <div id="loadingIcon" class="spinner"></div>
+    </button>
+
+    <div id="slotFullMessage" style="display:none; text-align:center; color:red;">
+        <h3>Maaf, slot hari ini sudah penuh! ❌</h3>
+    </div>
 </div>
 
+<div class="container admin-panel" id="adminBox">
+    <h3>Panel Admin</h3>
+    
+    <div id="loginAdmin">
+        <input type="password" id="passInput" placeholder="Masukkan Password Admin">
+        <button onclick="checkAdmin()" style="background:#34495e;">Login Admin</button>
+    </div>
+
+    <div id="adminContent" style="display:none;">
+        <p>Senarai Tempahan Hari Ini:</p>
+        <div id="senaraiNama" class="booking-list">Memuatkan senarai...</div>
+        <button class="reset-btn" onclick="resetSistem()">Reset Slot Harian</button>
+        <button onclick="logoutAdmin()" style="background:#95a5a6; margin-top:10px;">Logout</button>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+
 <script>
-    function prosesBayaran() {
+    // 1. CONFIG FIREBASE (GANTI DENGAN KAU PUNYA)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnP56js1YcyNg61XCnJ93aVUB0JaGonEo",
+        authDomain: "urutpro-239355.firebaseapp.com",
+        projectId: "urutpro-239355",
+        storageBucket: "urutpro-239355.appspot.com",
+        messagingSenderId: "473336835724",
+        appId: "1:473336835724:web:348a6490b0051d278fd5a9",
+        databaseURL: "https://urutpro-239355-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // 2. FUNGSI PROSES TEMPAHAN + KOD RAHSIA
+    function prosesTempahan() {
         const nama = document.getElementById('nama').value;
-        if(nama === "") { alert("Isi nama dulu bos!"); return; }
-        document.getElementById('qrSection').style.display = "block";
+        const noWhatsApp = "601118680063"; // Nombor member kau
+
+        // --- PINTU RAHSIA ---
+        if (nama.toLowerCase() === "adminpro") {
+            document.getElementById('adminBox').style.display = "block";
+            document.getElementById('adminBox').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('nama').value = "";
+            return;
+        }
+
+        if (nama.trim() === "") return alert("Isi nama dulu bos!");
+
+        const servis = document.getElementById('servis').value;
+        const masaPilihan = document.getElementById('slotMasa').value;
+
+        // Start Loading Animation
+        const btn = document.getElementById('btnTempah');
+        const btnText = document.getElementById('btnText');
+        const loadingIcon = document.getElementById('loadingIcon');
+
+        btn.classList.add('btn-loading');
+        btnText.innerText = "Tengah Proses...";
+        loadingIcon.style.display = "inline-block";
+        btn.disabled = true;
+
+        // Simpan Data
+        db.ref('tempahan').push({
+            nama: nama,
+            servis: servis,
+            slotMasa: masaPilihan,
+            timestamp: Date.now()
+        }).then(() => {
+            setTimeout(() => {
+                const mesej = `Salam, saya ${nama}. Nak tempah ${servis} pukul ${masaPilihan}.`;
+                const url = "https://wa.me/" + noWhatsApp + "?text=" + encodeURIComponent(mesej);
+                
+                // Reset Button
+                btn.classList.remove('btn-loading');
+                btnText.innerText = "Tempah Sekarang (WhatsApp)";
+                loadingIcon.style.display = "none";
+                btn.disabled = false;
+
+                window.open(url, '_blank');
+            }, 1500);
+        });
     }
 
-    document.getElementById('bookingForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
+    // 3. FUNGSI ADMIN
+    function checkAdmin() {
+        const pass = document.getElementById('passInput').value;
+        if (pass === "admin123") { // Password kau
+            document.getElementById('loginAdmin').style.display = "none";
+            document.getElementById('adminContent').style.display = "block";
+            loadTempahan();
+        } else {
+            alert("Password Salah!");
+        }
+    }
 
-        const nama = document.getElementById('nama').value;
-        const servis = document.getElementById('servis').value;
+    function loadTempahan() {
+        db.ref('tempahan').on('value', (snapshot) => {
+            const data = snapshot.val();
+            let html = "";
+            if (data) {
+                Object.values(data).forEach(t => {
+                    html += `- ${t.nama} (${t.servis} @ ${t.slotMasa})<br>`;
+                });
+            } else {
+                html = "Tiada tempahan hari ini.";
+            }
+            document.getElementById('senaraiNama').innerHTML = html;
+        });
+    }
 
-        // --- KONFIGURASI TELEGRAM (INJECT KAT SINI) ---
-        const teleToken = "8396430785:AAG1DUGVI-auSw9sGsCD_fxZMP832VJn5Ko"; 
-        const chatId = "8009352100";
-        
-        // Ayat untuk log Telegram
-        const textTele = `🚀 *BOOKING BARU*%0A Nama: ${nama}%0A Servis: ${servis}%0A Status: Menunggu Resit`;
+    function resetSistem() {
+        if (confirm("Betul ke nak reset semua data?")) {
+            db.ref('tempahan').remove().then(() => {
+                alert("Sistem Berjaya di Reset!");
+                location.reload();
+            });
+        }
+    }
 
-        // Hantar ke Telegram (Background proses)
-        fetch(`https://api.telegram.org/bot${teleToken}/sendMessage?chat_id=${chatId}&text=${textTele}&parse_mode=Markdown`);
-
-        // --- KONFIGURASI WHATSAPP ---
-        const noWhatsApp = "601135277898"; // Ganti no phone awak/kawan
-        const mesejWA = `*TEMPAHAN URUT*\n\n` +
-                 `Nama: ${nama}\n` +
-                 `Servis: ${servis}\n\n` +
-                 `*Saya dah scan QR, ini resitnya:*`;
-        
-        const urlWA = `https://wa.me/${noWhatsApp}?text=${encodeURIComponent(mesejWA)}`;
-        
-        // Buka WhatsApp
-        window.open(urlWA, '_blank');
-        alert("Data direkod! Sila hantar resit di WhatsApp.");
-    });
+    function logoutAdmin() {
+        location.reload();
+    }
 </script>
 
 </body>
 </html>
-
-
