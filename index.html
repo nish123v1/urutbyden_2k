@@ -167,3 +167,194 @@
             letter-spacing: 0.5px;
         }
         .btn-confirm:hover { background: #ecfdf5; }
+        
+        .reset-btn { background: #dc2626; margin-top: 25px; }
+        .reset-btn:hover { background: #b91c1c; }
+    </style>
+</head>
+<body>
+
+<div class="container" id="mainWrapper">
+    <div id="bookingForm">
+        <h2>UrutPro</h2>
+        <div class="slot-info">Baki Slot Hari Ini: <span id="bakiSlot">...</span></div>
+        
+        <label>Nama Penuh</label>
+        <input type="text" id="nama" placeholder="Taip nama anda / kod rahsia">
+
+        <label>Pilih Servis</label>
+        <select id="servis">
+            <option value="Urut Badan">Urut Badan</option>
+            <option value="Bekam Sunnah">Bekam Sunnah</option>
+            <option value="Pakej Urut+Bekam">Pakej Urut+Bekam</option>
+        </select>
+
+        <label>Slot Waktu (Sah)</label>
+        <select id="slotMasa">
+            </select>
+
+        <button id="btnTempah" onclick="prosesTempahan()">Sahkan Tempahan</button>
+    </div>
+
+    <div class="admin-panel" id="adminBox">
+        <h3>Dashboard</h3>
+        
+        <div id="loginAdmin">
+            <input type="password" id="passInput" placeholder="Password Admin">
+            <button onclick="checkAdmin()" style="background:var(--dark);">Login</button>
+        </div>
+
+        <div id="adminContent" style="display:none;">
+            <p><strong>Tempahan Hari Ini:</strong></p>
+            <div id="senaraiNama">Memuatkan data...</div>
+            <button class="reset-btn" onclick="resetSistem()">Reset Data Semalam</button>
+            <button onclick="location.reload()" style="background:#6b7280; margin-top:10px;">Logout</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
+
+<script>
+    // 1. CONFIG FIREBASE (SILA GUNA CONFIG ASAL ANDA)
+    const firebaseConfig = {
+        apiKey: "AIzaSyBnP56js1YcyNg61XCnJ93aVUB0JaGonEo",
+        authDomain: "urutpro-239355.firebaseapp.com",
+        projectId: "urutpro-239355",
+        storageBucket: "urutpro-239355.appspot.com",
+        messagingSenderId: "473336835724",
+        appId: "1:473336835724:web:348a6490b0051d278fd5a9",
+        databaseURL: "https://urutpro-239355-default-rtdb.asia-southeast1.firebasedatabase.app"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    // Senarai masa yang kau tawarkan
+    const senaraiMasaAsal = ["02:00 PM", "05:00 PM", "08:00 PM", "10:00 PM", "12:00 AM"];
+
+    // 2. MONITOR SLOT & MASA (REAL-TIME)
+    db.ref('tempahan').on('value', (snapshot) => {
+        const data = snapshot.val();
+        let masaDahSah = [];
+        let jumlahDahBayar = 0;
+
+        if (data) {
+            Object.values(data).forEach(t => {
+                if (t.status === "Dah Bayar") {
+                    masaDahSah.push(t.masa);
+                    jumlahDahBayar++;
+                }
+            });
+        }
+
+        // Update baki slot
+        const baki = 5 - jumlahDahBayar;
+        document.getElementById('bakiSlot').innerText = baki + "/5";
+
+        // Update dropdown masa (Hanya tunjuk yang belum kena "Confirm Bayar")
+        const selectMasa = document.getElementById('slotMasa');
+        selectMasa.innerHTML = "";
+        
+        senaraiMasaAsal.forEach(m => {
+            if (!masaDahSah.includes(m)) {
+                let opt = document.createElement('option');
+                opt.value = m;
+                opt.innerText = m;
+                selectMasa.appendChild(opt);
+            }
+        });
+
+        // Kalau slot penuh
+        if (baki <= 0) {
+            document.getElementById('btnTempah').disabled = true;
+            document.getElementById('btnTempah').innerText = "Slot Penuh Hari Ini";
+        } else {
+            document.getElementById('btnTempah').disabled = false;
+            document.getElementById('btnTempah').innerText = "Sahkan Tempahan";
+        }
+    });
+
+    // 3. FUNGSI TEMPAH
+    function prosesTempahan() {
+        const nama = document.getElementById('nama').value.trim();
+        const noWA = "601118680063"; // Nombor kawan kau
+
+        if (nama.toLowerCase() === "adminpro") {
+            document.getElementById('adminBox').style.display = "block";
+            document.getElementById('adminBox').scrollIntoView({ behavior: 'smooth' });
+            document.getElementById('nama').value = "";
+            return;
+        }
+
+        if (!nama) return alert("Sila isi nama penuh anda!");
+        const masaDipilih = document.getElementById('slotMasa').value;
+        if (!masaDipilih) return alert("Tiada slot masa tersedia!");
+
+        const info = {
+            nama: nama,
+            servis: document.getElementById('servis').value,
+            masa: masaDipilih,
+            status: "Belum Bayar",
+            waktu: new Date().toLocaleString()
+        };
+
+        db.ref('tempahan').push(info).then(() => {
+            const mesej = `Salam UrutPro, saya ${nama}. Dah booking ${info.servis} pukul ${info.masa}. Macam mana nak sahkan bayaran?`;
+            window.open(`https://wa.me/${noWA}?text=${encodeURIComponent(mesej)}`, '_blank');
+            location.reload();
+        });
+    }
+
+    // 4. FUNGSI ADMIN
+    function checkAdmin() {
+        if (document.getElementById('passInput').value === "admin123") {
+            document.getElementById('loginAdmin').style.display = "none";
+            document.getElementById('adminContent').style.display = "block";
+            loadAdminList();
+        } else {
+            alert("Password Salah!");
+        }
+    }
+
+    function loadAdminList() {
+        db.ref('tempahan').on('value', (snap) => {
+            const data = snap.val();
+            let html = "";
+            if (data) {
+                Object.keys(data).reverse().forEach(id => {
+                    const t = data[id];
+                    const isDah = t.status === "Dah Bayar";
+                    html += `
+                        <div class="booking-card ${isDah ? 'status-dah' : ''}">
+                            <div class="card-details">
+                                <strong class="card-client-info">${t.nama}</strong><br>
+                                ${t.servis} | ${t.masa}<br>
+                                <div class="card-meta">Diterima: ${t.waktu}</div>
+                                ${!isDah ? `<button class="btn-confirm" onclick="confirmBayar('${id}')">Sahkan Bayaran ✅</button>` : ''}
+                            </div>
+                            <span class="badge ${isDah ? 'bg-success' : 'bg-warning'}">${t.status}</span>
+                        </div>`;
+                });
+            } else {
+                html = "<p style='text-align:center; color:#9ca3af;'>Tiada tempahan buat masa ini.</p>";
+            }
+            document.getElementById('senaraiNama').innerHTML = html;
+        });
+    }
+
+    function confirmBayar(id) {
+        if(confirm("Confirm pelanggan ni dah bayar? Slot akan ditolak.")) {
+            db.ref('tempahan/' + id).update({ status: "Dah Bayar" });
+        }
+    }
+
+    function resetSistem() {
+        if(confirm("Padam SEMUA data semalam? Sistem takkan boleh restore.")) {
+            db.ref('tempahan').remove().then(() => location.reload());
+        }
+    }
+</script>
+</body>
+</html>
