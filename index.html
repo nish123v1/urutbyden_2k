@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>UrutPro - Booking System</title>
-    
     <style>
         :root { --primary: #27ae60; --dark: #2c3e50; --danger: #e74c3c; --warning: #f39c12; }
         body { font-family: 'Segoe UI', sans-serif; background: #eef2f3; padding: 15px; }
@@ -15,13 +14,12 @@
         button { background: var(--primary); color: white; border: none; font-weight: bold; cursor: pointer; }
         .admin-panel { display: none; margin-top: 30px; border-top: 2px solid #eee; padding-top: 20px; }
         .booking-card { background: #fff; border: 1px solid #ddd; padding: 15px; margin-bottom: 10px; border-radius: 10px; }
-        .status-belum { border-left: 8px solid var(--warning); opacity: 0.8; }
         .status-dah { border-left: 8px solid var(--primary); }
+        .status-belum { border-left: 8px solid var(--warning); opacity: 0.8; }
         .badge { font-size: 0.7em; padding: 3px 8px; border-radius: 5px; color: white; float: right; }
         .bg-warning { background: var(--warning); }
         .bg-success { background: var(--primary); }
-        .btn-confirm { background: var(--dark); font-size: 12px; padding: 8px; margin-top: 10px; width: auto; display: inline-block; }
-        .reset-btn { background: var(--danger); margin-top: 20px; }
+        .btn-confirm { background: var(--dark); font-size: 11px; padding: 8px; margin-top: 10px; width: auto; border-radius: 5px; }
     </style>
 </head>
 <body>
@@ -40,25 +38,22 @@
             <option value="Bekam Sunnah">Bekam Sunnah</option>
         </select>
 
-        <label>Waktu:</label>
+        <label>Pilih Waktu (Slot Tersedia):</label>
         <select id="slotMasa">
-            <option value="02:00 PM">02:00 PM</option>
-            <option value="08:00 PM">08:00 PM</option>
-        </select>
+            </select>
 
         <button id="btnTempah" onclick="prosesTempahan()">Tempah & WhatsApp</button>
     </div>
 
     <div class="admin-panel" id="adminBox">
-        <h3 style="text-align:center;">🛡️ Admin Dashboard</h3>
+        <h3 style="text-align:center;">🛡️ Dashboard Admin</h3>
         <div id="loginAdmin">
             <input type="password" id="passInput" placeholder="Password Admin">
             <button onclick="checkAdmin()" style="background:var(--dark);">Login</button>
         </div>
         <div id="adminContent" style="display:none;">
-            <p><strong>Senarai Tempahan:</strong></p>
             <div id="senaraiNama">Memuatkan...</div>
-            <button class="reset-btn" onclick="resetSistem()">Reset Semua Data</button>
+            <button onclick="db.ref('tempahan').remove().then(()=>location.reload())" style="background:var(--danger); margin-top:20px;">Reset Semua</button>
         </div>
     </div>
 </div>
@@ -80,26 +75,50 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // --- LOGIK BARU: KIRA SLOT HANYA JIKA DAH BAYAR ---
+    // Senarai masa asal (Kau boleh tambah/tukar kat sini)
+    const senaraiMasaAsal = ["02:00 PM", "05:00 PM", "08:00 PM", "10:00 PM", "12:00 AM"];
+
+    // --- FUNGSI UTAMA: UPDATE SLOT & MASA SECARA REAL-TIME ---
     db.ref('tempahan').on('value', (snap) => {
         const data = snap.val();
+        let masaDahAmbil = [];
         let jumlahDahBayar = 0;
-        
+
         if (data) {
             Object.values(data).forEach(t => {
                 if (t.status === "Dah Bayar") {
+                    masaDahAmbil.push(t.masa);
                     jumlahDahBayar++;
                 }
             });
         }
-        
+
+        // 1. Update Baki Slot
         const baki = 5 - jumlahDahBayar;
         document.getElementById('bakiSlot').innerText = baki + "/5";
-        
+
+        // 2. Filter & Papar Masa Yang Belum Diambil Sahaja
+        const slotSelect = document.getElementById('slotMasa');
+        slotSelect.innerHTML = ""; // Kosongkan dulu
+
+        senaraiMasaAsal.forEach(masa => {
+            if (!masaDahAmbil.includes(masa)) {
+                let opt = document.createElement('option');
+                opt.value = masa;
+                opt.innerText = masa;
+                slotSelect.appendChild(opt);
+            }
+        });
+
+        // 3. Kalau slot habis
         if (baki <= 0) {
             document.getElementById('btnTempah').disabled = true;
-            document.getElementById('btnTempah').innerText = "Slot Penuh Hari Ini";
+            document.getElementById('btnTempah').innerText = "Slot Penuh";
             document.getElementById('btnTempah').style.background = "#bdc3c7";
+        } else {
+            document.getElementById('btnTempah').disabled = false;
+            document.getElementById('btnTempah').innerText = "Tempah & WhatsApp";
+            document.getElementById('btnTempah').style.background = "var(--primary)";
         }
     });
 
@@ -113,12 +132,15 @@
             return;
         }
 
-        if(!nama) return alert("Isi nama dulu!");
+        if(!nama) return alert("Isi nama!");
+        
+        const selectedMasa = document.getElementById('slotMasa').value;
+        if(!selectedMasa) return alert("Tiada slot masa tersedia!");
 
         const dataTempahan = {
             nama: nama,
             servis: document.getElementById('servis').value,
-            masa: document.getElementById('slotMasa').value,
+            masa: selectedMasa,
             status: "Belum Bayar",
             waktu: new Date().toLocaleString()
         };
@@ -143,7 +165,7 @@
             const data = snap.val();
             let html = "";
             if(data) {
-                Object.keys(data).forEach(id => {
+                Object.keys(data).reverse().forEach(id => {
                     const t = data[id];
                     const isDah = t.status === "Dah Bayar";
                     html += `
@@ -161,10 +183,6 @@
 
     function confirmBayar(id) {
         db.ref('tempahan/' + id).update({ status: "Dah Bayar" });
-    }
-
-    function resetSistem() {
-        if(confirm("Padam semua?")) db.ref('tempahan').remove().then(() => location.reload());
     }
 </script>
 </body>
