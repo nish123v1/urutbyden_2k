@@ -3,66 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UrutPro - Premium Mobile Booking</title>
+    <title>UrutPro - Signature Edition</title>
     
     <style>
-        /* --- CSS PREMIMUM INTERNASIONAL --- */
+        /* --- CSS PREMIUM SIGNATURE EDITION --- */
         :root {
-            /* Palette warna premium: Hijau Emerald, Kelabu Gelap, & Emas Lembut */
-            --primary: #059669; /* Hijau Emerald */
-            --primary-hover: #047857;
-            --dark: #111827; /* Near black untuk font */
-            --bg-body: #f3f4f6; /* Kelabu sangat muda untuk background */
-            --shadow-card: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
-            --text-main: #374151;
-            --border-ui: #e5e7eb;
+            --primary: #047857; 
+            --primary-light: #ecfdf5;
+            --dark: #111827; 
+            --text: #374151; 
+            --bg-body: #f8fafc; 
+            --shadow-premium: 0 25px 50px -12px rgba(0, 0, 0, 0.05);
         }
         
-        * { box-sizing: border-box; }
+        /* Fix untuk pastikan input tak terkeluar skrin */
+        * { box-sizing: border-box; transition: all 0.2s ease-in-out; }
 
         body { 
-            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; 
+            font-family: 'SF Pro Display', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
             background-color: var(--bg-body);
-            padding: 15px; 
-            color: var(--text-main); 
+            color: var(--text); 
             display: flex;
             align-items: center;
             justify-content: center;
             min-height: 100vh;
             margin: 0;
-            line-height: 1.5;
+            padding: 20px;
         }
         
         .container { 
-            max-width: 420px; 
+            max-width: 440px; 
             width: 100%; 
             background: #ffffff; 
-            padding: 30px; 
-            border-radius: 20px; 
-            box-shadow: var(--shadow-card); 
-            transition: transform 0.2s ease;
+            padding: 40px 30px; 
+            border-radius: 24px; 
+            box-shadow: var(--shadow-premium);
         }
 
-        /* Tajuk utama lebih premium (tidak bold sangat, spacing luas) */
         h2 { 
             text-align: center; 
             color: var(--dark); 
-            margin-top: 0;
-            margin-bottom: 10px; 
-            font-weight: 700;
-            letter-spacing: -0.5px;
-            font-size: 1.8em;
+            font-weight: 800;
+            font-size: 2.2em;
+            margin: 0 0 5px 0;
+            letter-spacing: -1px;
         }
         
-        /* Baki Slot Card (Nampak premium, soft background) */
         .slot-info { 
             text-align: center; 
-            font-weight: 600; 
             color: var(--primary); 
-            margin-bottom: 25px; 
-            background: #ecfdf5; 
+            font-weight: 700;
+            margin-bottom: 30px; 
+            background: var(--primary-light); 
             padding: 12px; 
-            border-radius: 12px;
+            border-radius: 14px;
             font-size: 0.95em;
             border: 1px solid #d1fae5;
         }
@@ -70,145 +64,108 @@
         label { 
             display: block; 
             margin-bottom: 8px; 
-            font-weight: 500; 
-            font-size: 0.85em; 
+            font-weight: 600; 
+            font-size: 0.8em; 
             color: var(--dark);
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 1px;
         }
         
-        /* Input & Select lebih bersih (tanpa border hitam pekat) */
         input, select { 
             width: 100%; 
-            padding: 14px 16px; 
-            margin-bottom: 18px; 
-            border: 1px solid var(--border-ui); 
+            padding: 14px 18px; 
+            margin-bottom: 20px; 
+            border: 1px solid #e5e7eb; 
             border-radius: 12px; 
             font-size: 16px; 
+            background: #fff;
             outline: none;
-            display: block; 
-            color: var(--text-main);
-            background: #fdfdfd;
-            transition: border-color 0.2s, box-shadow 0.2s;
         }
         
-        input:focus, select:focus { 
-            border-color: #a7f3d0;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-        }
+        input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1); }
         
-        /* Butang Tempah Utama (Bold tapi rounded lembut) */
         button { 
             width: 100%; 
             padding: 16px; 
-            margin-bottom: 15px; 
-            border: 1px solid transparent; 
-            border-radius: 12px; 
-            font-size: 16px; 
-            display: block;
+            border: none; 
+            border-radius: 14px; 
             background: var(--primary); 
             color: white; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: background 0.2s, transform 0.1s;
+            font-weight: 700; 
+            font-size: 16px; 
+            cursor: pointer;
+            box-shadow: 0 10px 15px -3px rgba(4, 120, 87, 0.2);
         }
 
-        button:hover { background: var(--primary-hover); }
-        button:active { transform: scale(0.98); }
-        button:disabled { background: #d1d5db; cursor: not-allowed; opacity: 0.7; }
+        button:hover { transform: translateY(-2px); background: #036c4f; }
+        button:disabled { background: #d1d5db; transform: none; box-shadow: none; cursor: not-allowed; }
 
-        /* --- ADMIN SECTION STYLES (Clean & Structured) --- */
-        .admin-panel { display: none; margin-top: 35px; border-top: 1px solid #eee; padding-top: 25px; }
-        .admin-panel h3 { text-align: center; color: var(--dark); margin-top: 0; font-weight: 600; }
-        
+        /* --- ADMIN SECTION --- */
+        .admin-panel { display: none; margin-top: 40px; border-top: 1px solid #eee; padding-top: 30px; }
         .booking-card { 
             background: #fff; 
-            border: 1px solid var(--border-ui);
-            padding: 18px; 
-            margin-bottom: 12px; 
-            border-radius: 12px;
-            font-size: 0.9em;
+            border: 1px solid #f1f5f9;
+            padding: 20px; 
+            margin-bottom: 15px; 
+            border-radius: 16px;
             display: flex;
             justify-content: space-between;
-            align-items: start;
+            align-items: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
         }
         
-        /* Indikator Status di Tepi Kiri (Minimalis) */
-        .card-details { border-left: 4px solid #f97316; padding-left: 15px; } /* Default Belum Bayar (Oren) */
-        .booking-card.status-dah .card-details { border-left-color: var(--primary); }
+        .status-line { position: absolute; left: 0; top: 0; width: 5px; height: 100%; background: #f97316; }
+        .status-dah .status-line { background: var(--primary); }
         
-        .card-client-info { color: var(--text-main); }
-        .card-meta { font-size: 0.8em; color: #9ca3af; margin-top: 4px; }
-        
-        /* Badge Status (Premium tags) */
-        .badge { 
-            font-size: 0.7em; 
-            padding: 4px 10px; 
-            border-radius: 20px; 
-            color: white; 
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .bg-warning { background: #f97316; } /* Oren Premium */
+        .badge { font-size: 0.7em; padding: 4px 10px; border-radius: 20px; color: white; font-weight: 700; text-transform: uppercase; }
+        .bg-orange { background: #f97316; }
         .bg-success { background: var(--primary); }
 
         .btn-confirm { 
-            background: #fff; 
-            color: var(--primary);
-            border: 1px solid var(--primary);
+            background: transparent; 
+            color: var(--primary); 
+            border: 1px solid var(--primary); 
             font-size: 11px; 
             padding: 6px 12px; 
-            margin-top: 8px; 
             width: auto; 
-            display: inline-block;
-            border-radius: 8px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            margin-top: 10px;
         }
-        .btn-confirm:hover { background: #ecfdf5; }
-        
-        .reset-btn { background: #dc2626; margin-top: 25px; }
-        .reset-btn:hover { background: #b91c1c; }
     </style>
 </head>
 <body>
 
-<div class="container" id="mainWrapper">
+<div class="container">
     <div id="bookingForm">
         <h2>UrutPro</h2>
-        <div class="slot-info">Baki Slot Hari Ini: <span id="bakiSlot">...</span></div>
+        <div class="slot-info">Slot Tersedia: <span id="bakiSlot">...</span></div>
         
         <label>Nama Penuh</label>
-        <input type="text" id="nama" placeholder="Taip nama anda / kod rahsia">
+        <input type="text" id="nama" placeholder="Taip nama anda">
 
-        <label>Pilih Servis</label>
+        <label>Jenis Servis</label>
         <select id="servis">
             <option value="Urut Badan">Urut Badan</option>
             <option value="Bekam Sunnah">Bekam Sunnah</option>
-            <option value="Pakej Urut+Bekam">Pakej Urut+Bekam</option>
+            <option value="Pakej Premium">Pakej Premium</option>
         </select>
 
-        <label>Slot Waktu (Sah)</label>
-        <select id="slotMasa">
-            </select>
+        <label>Waktu Temujanji</label>
+        <select id="slotMasa"></select>
 
         <button id="btnTempah" onclick="prosesTempahan()">Sahkan Tempahan</button>
     </div>
 
     <div class="admin-panel" id="adminBox">
-        <h3>Dashboard</h3>
-        
+        <h3 style="text-align:center;">Admin Dashboard</h3>
         <div id="loginAdmin">
-            <input type="password" id="passInput" placeholder="Password Admin">
-            <button onclick="checkAdmin()" style="background:var(--dark);">Login</button>
+            <input type="password" id="passInput" placeholder="Password">
+            <button onclick="checkAdmin()" style="background:var(--dark);">Masuk</button>
         </div>
-
         <div id="adminContent" style="display:none;">
-            <p><strong>Tempahan Hari Ini:</strong></p>
-            <div id="senaraiNama">Memuatkan data...</div>
-            <button class="reset-btn" onclick="resetSistem()">Reset Data Semalam</button>
-            <button onclick="location.reload()" style="background:#6b7280; margin-top:10px;">Logout</button>
+            <div id="senaraiNama"></div>
+            <button onclick="db.ref('tempahan').remove().then(()=>location.reload())" style="background:#ef4444; margin-top:20px;">Reset Sistem</button>
         </div>
     </div>
 </div>
@@ -217,7 +174,6 @@
 <script src="https://www.gstatic.com/firebasejs/9.1.3/firebase-database-compat.js"></script>
 
 <script>
-    // 1. CONFIG FIREBASE (SILA GUNA CONFIG ASAL ANDA)
     const firebaseConfig = {
         apiKey: "AIzaSyBnP56js1YcyNg61XCnJ93aVUB0JaGonEo",
         authDomain: "urutpro-239355.firebaseapp.com",
@@ -230,13 +186,10 @@
 
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const senaraiMasaAsal = ["02:00 PM", "05:00 PM", "08:00 PM", "10:00 PM"];
 
-    // Senarai masa yang kau tawarkan
-    const senaraiMasaAsal = ["02:00 PM", "05:00 PM", "08:00 PM", "10:00 PM", "12:00 AM"];
-
-    // 2. MONITOR SLOT & MASA (REAL-TIME)
-    db.ref('tempahan').on('value', (snapshot) => {
-        const data = snapshot.val();
+    db.ref('tempahan').on('value', (snap) => {
+        const data = snap.val();
         let masaDahSah = [];
         let jumlahDahBayar = 0;
 
@@ -249,76 +202,56 @@
             });
         }
 
-        // Update baki slot
-        const baki = 5 - jumlahDahBayar;
-        document.getElementById('bakiSlot').innerText = baki + "/5";
-
-        // Update dropdown masa (Hanya tunjuk yang belum kena "Confirm Bayar")
+        document.getElementById('bakiSlot').innerText = (5 - jumlahDahBayar) + "/5";
         const selectMasa = document.getElementById('slotMasa');
         selectMasa.innerHTML = "";
         
         senaraiMasaAsal.forEach(m => {
             if (!masaDahSah.includes(m)) {
                 let opt = document.createElement('option');
-                opt.value = m;
-                opt.innerText = m;
+                opt.value = m; opt.innerText = m;
                 selectMasa.appendChild(opt);
             }
         });
 
-        // Kalau slot penuh
-        if (baki <= 0) {
+        if (5 - jumlahDahBayar <= 0) {
             document.getElementById('btnTempah').disabled = true;
-            document.getElementById('btnTempah').innerText = "Slot Penuh Hari Ini";
-        } else {
-            document.getElementById('btnTempah').disabled = false;
-            document.getElementById('btnTempah').innerText = "Sahkan Tempahan";
+            document.getElementById('btnTempah').innerText = "Slot Penuh";
         }
     });
 
-    // 3. FUNGSI TEMPAH
     function prosesTempahan() {
         const nama = document.getElementById('nama').value.trim();
-        const noWA = "601118680063"; // Nombor kawan kau
-
         if (nama.toLowerCase() === "adminpro") {
             document.getElementById('adminBox').style.display = "block";
-            document.getElementById('adminBox').scrollIntoView({ behavior: 'smooth' });
-            document.getElementById('nama').value = "";
             return;
         }
-
-        if (!nama) return alert("Sila isi nama penuh anda!");
-        const masaDipilih = document.getElementById('slotMasa').value;
-        if (!masaDipilih) return alert("Tiada slot masa tersedia!");
+        if (!nama) return alert("Isi nama!");
 
         const info = {
             nama: nama,
             servis: document.getElementById('servis').value,
-            masa: masaDipilih,
+            masa: document.getElementById('slotMasa').value,
             status: "Belum Bayar",
             waktu: new Date().toLocaleString()
         };
 
         db.ref('tempahan').push(info).then(() => {
-            const mesej = `Salam UrutPro, saya ${nama}. Dah booking ${info.servis} pukul ${info.masa}. Macam mana nak sahkan bayaran?`;
-            window.open(`https://wa.me/${noWA}?text=${encodeURIComponent(mesej)}`, '_blank');
+            const msg = `Salam, saya ${nama}. Booking ${info.servis} pukul ${info.masa}.`;
+            window.open(`https://wa.me/601118680063?text=${encodeURIComponent(msg)}`);
             location.reload();
         });
     }
 
-    // 4. FUNGSI ADMIN
     function checkAdmin() {
         if (document.getElementById('passInput').value === "admin123") {
             document.getElementById('loginAdmin').style.display = "none";
             document.getElementById('adminContent').style.display = "block";
-            loadAdminList();
-        } else {
-            alert("Password Salah!");
+            loadAdmin();
         }
     }
 
-    function loadAdminList() {
+    function loadAdmin() {
         db.ref('tempahan').on('value', (snap) => {
             const data = snap.val();
             let html = "";
@@ -328,32 +261,21 @@
                     const isDah = t.status === "Dah Bayar";
                     html += `
                         <div class="booking-card ${isDah ? 'status-dah' : ''}">
-                            <div class="card-details">
-                                <strong class="card-client-info">${t.nama}</strong><br>
-                                ${t.servis} | ${t.masa}<br>
-                                <div class="card-meta">Diterima: ${t.waktu}</div>
-                                ${!isDah ? `<button class="btn-confirm" onclick="confirmBayar('${id}')">Sahkan Bayaran ✅</button>` : ''}
+                            <div class="status-line"></div>
+                            <div>
+                                <strong>${t.nama}</strong><br><small>${t.masa}</small><br>
+                                ${!isDah ? `<button class="btn-confirm" onclick="confirmBayar('${id}')">Sahkan ✅</button>` : ''}
                             </div>
-                            <span class="badge ${isDah ? 'bg-success' : 'bg-warning'}">${t.status}</span>
+                            <span class="badge ${isDah ? 'bg-success' : 'bg-orange'}">${t.status}</span>
                         </div>`;
                 });
-            } else {
-                html = "<p style='text-align:center; color:#9ca3af;'>Tiada tempahan buat masa ini.</p>";
             }
             document.getElementById('senaraiNama').innerHTML = html;
         });
     }
 
     function confirmBayar(id) {
-        if(confirm("Confirm pelanggan ni dah bayar? Slot akan ditolak.")) {
-            db.ref('tempahan/' + id).update({ status: "Dah Bayar" });
-        }
-    }
-
-    function resetSistem() {
-        if(confirm("Padam SEMUA data semalam? Sistem takkan boleh restore.")) {
-            db.ref('tempahan').remove().then(() => location.reload());
-        }
+        db.ref('tempahan/' + id).update({ status: "Dah Bayar" });
     }
 </script>
 </body>
