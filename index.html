@@ -243,3 +243,50 @@
             nama: nama,
             servis: document.getElementById('servis').value,
             masa: document.getElementById('slotMasa').value,
+            status: "Belum Bayar",
+            waktu: new Date().toLocaleString()
+        };
+
+        db.ref('tempahan').push(info).then(() => {
+            // Sini kau boleh gantikan link WhatsApp dengan link gambar QR kau
+            const msg = `Salam, saya ${nama}. Saya ingin sahkan tempahan ${info.servis} pukul ${info.masa}. Sila berikan kod QR untuk pembayaran.`;
+            window.open(`https://wa.me/601118680063?text=${encodeURIComponent(msg)}`);
+            location.reload();
+        });
+    }
+
+    function checkAdmin() {
+        if (document.getElementById('passInput').value === "admin123") {
+            document.getElementById('loginAdmin').style.display = "none";
+            document.getElementById('adminContent').style.display = "block";
+            loadAdmin();
+        }
+    }
+
+    function loadAdmin() {
+        db.ref('tempahan').on('value', (snap) => {
+            const data = snap.val();
+            let html = "";
+            if (data) {
+                Object.keys(data).reverse().forEach(id => {
+                    const t = data[id];
+                    const isDah = t.status === "Dah Bayar";
+                    html += `<div class="booking-card">
+                        <div><strong>${t.nama}</strong><br><small>${t.masa}</small></div>
+                        <div>
+                            <span class="badge ${isDah ? 'bg-success' : 'bg-orange'}">${t.status}</span>
+                            ${!isDah ? `<br><button onclick="confirmBayar('${id}')" style="padding:4px; font-size:10px; margin-top:5px;">Sahkan</button>` : ''}
+                        </div>
+                    </div>`;
+                });
+            }
+            document.getElementById('senaraiNama').innerHTML = html;
+        });
+    }
+
+    function confirmBayar(id) {
+        db.ref('tempahan/' + id).update({ status: "Dah Bayar" });
+    }
+</script>
+</body>
+</html>
