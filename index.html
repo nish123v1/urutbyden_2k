@@ -1,162 +1,126 @@
 <!DOCTYPE html>
-<html>
+<html lang="ms">
 <head>
-    <title>Periodic Table 3D Animation</title>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Perfect Fit Love</title>
     <style>
-        body { margin: 0; background-color: #000; color: #fff; font-family: Arial, sans-serif; overflow: hidden; }
-        #menu { position: absolute; top: 20px; width: 100%; text-align: center; }
-        button {
-            color: rgba(127,255,255,0.75);
-            background: transparent;
-            outline: 1px solid rgba(127,255,255,0.75);
-            border: 0px; padding: 5px 10px; cursor: pointer;
+        body {
+            margin: 0;
+            background-color: #000;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            width: 100vw;
         }
-        button:hover { background-color: rgba(0,255,255,0.5); }
-        button:active { color: #000; background-color: rgba(0,255,255,0.75); }
-        .element {
-            width: 120px; height: 160px;
-            box-shadow: 0px 0px 12px rgba(0,255,255,0.5);
-            border: 1px solid rgba(127,255,255,0.25);
-            text-align: center; cursor: default;
+
+        .heart-container {
+            position: relative;
+            /* Container ni kita tetapkan saiz supaya tak lari */
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
-        .element:hover { box-shadow: 0px 0px 12px rgba(0,255,255,0.75); border: 1px solid rgba(127,255,255,0.75); }
-        .element .number { position: absolute; top: 20px; right: 20px; font-size: 12px; color: rgba(127,255,255,0.75); }
-        .element .symbol { position: absolute; top: 40px; left: 0px; right: 0px; font-size: 60px; font-weight: bold; color: rgba(255,255,255,0.75); text-shadow: 0 0 10px rgba(0,255,255,0.95); }
-        .element .details { position: absolute; bottom: 15px; left: 0px; right: 0px; font-size: 12px; color: rgba(127,255,255,0.75); }
+
+        .love-text {
+            position: absolute;
+            color: #ff2d75;
+            font-size: 9px; /* Kecilkan sikit font supaya lebih tajam */
+            font-weight: 900;
+            white-space: nowrap;
+            text-shadow: 0 0 8px #ff2d75;
+            user-select: none;
+            pointer-events: none;
+        }
+
+        .bloom {
+            animation: bloom-move 3.5s infinite ease-in-out;
+            opacity: 0;
+        }
+
+        @keyframes bloom-move {
+            0% { transform: translate(0, 0) scale(0); opacity: 0; }
+            20% { opacity: 1; }
+            80% { opacity: 1; }
+            100% { transform: var(--target) scale(1); opacity: 0; }
+        }
+
+        .static {
+            animation: pulse 2s infinite ease-in-out;
+            transform: var(--target);
+            opacity: 0.6;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.4; transform: var(--target) scale(0.95); }
+            50% { opacity: 0.8; transform: var(--target) scale(1.05); }
+        }
     </style>
 </head>
 <body>
-    <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
-    </script>
 
-    <div id="container"></div>
-    <div id="menu">
-        <button id="table">TABLE</button>
-        <button id="sphere">SPHERE</button>
-        <button id="helix">HELIX</button>
-        <button id="grid">GRID</button>
-    </div>
+    <div class="heart-container" id="heart"></div>
 
-    <script type="module">
-        import * as THREE from 'three';
-        import { TWEEN } from 'three/addons/libs/tween.module.min.js';
-        import { TrackballControls } from 'three/addons/controls/TrackballControls.js';
-        import { CSS3DRenderer, CSS3DObject } from 'three/addons/renderers/CSS3DRenderer.js';
-
-        // Data Ringkas (Simbol, Nama, Berat, X, Y)
-        const table = [
-            "H", "Hydrogen", "1.00794", 1, 1,
-            "He", "Helium", "4.002602", 18, 1,
-            "Li", "Lithium", "6.941", 1, 2,
-            "Be", "Beryllium", "9.012182", 2, 2,
-            "B", "Boron", "10.811", 13, 2,
-            "C", "Carbon", "12.0107", 14, 2,
-            "N", "Nitrogen", "14.0067", 15, 2,
-            "O", "Oxygen", "15.9994", 16, 2,
-            "F", "Fluorine", "18.998403", 17, 2,
-            "Ne", "Neon", "20.1797", 18, 2
-            // Tambah lagi data kalau nak penuh macam video
-        ];
-
-        let camera, scene, renderer, controls;
-        const objects = [];
-        const targets = { table: [], sphere: [], helix: [], grid: [] };
-
-        init();
-        animate();
-
-        function init() {
-            camera = new THREE.PerspectiveCamera(40, window.innerWidth / window.innerHeight, 1, 10000);
-            camera.position.z = 3000;
-            scene = new THREE.Scene();
-
-            // Create Elements
-            for (let i = 0; i < table.length; i += 5) {
-                const element = document.createElement('div');
-                element.className = 'element';
-                element.style.backgroundColor = 'rgba(0,127,127,' + (Math.random() * 0.5 + 0.25) + ')';
-
-                const number = document.createElement('div');
-                number.className = 'number';
-                number.textContent = (i / 5) + 1;
-                element.appendChild(number);
-
-                const symbol = document.createElement('div');
-                symbol.className = 'symbol';
-                symbol.textContent = table[i];
-                element.appendChild(symbol);
-
-                const details = document.createElement('div');
-                details.className = 'details';
-                details.innerHTML = table[i + 1] + '<br>' + table[i + 2];
-                element.appendChild(details);
-
-                const objectCSS = new CSS3DObject(element);
-                objectCSS.position.x = Math.random() * 4000 - 2000;
-                objectCSS.position.y = Math.random() * 4000 - 2000;
-                objectCSS.position.z = Math.random() * 4000 - 2000;
-                scene.add(objectCSS);
-                objects.push(objectCSS);
-
-                // Table Target
-                const object = new THREE.Object3D();
-                object.position.x = (table[i + 3] * 140) - 1330;
-                object.position.y = -(table[i + 4] * 180) + 990;
-                targets.table.push(object);
+    <script>
+        const heartContainer = document.getElementById('heart');
+        const text = "I LOVE YOU";
+        
+        function createHeart() {
+            const screenWidth = window.innerWidth;
+            const screenHeight = window.innerHeight;
+            
+            // Pilih saiz yang paling kecil antara lebar atau tinggi supaya tak terkeluar
+            // Nilai 45-50 biasanya 'sweet spot' untuk skrin telefon moden
+            const minDimension = Math.min(screenWidth, screenHeight);
+            const scale = minDimension / 45; 
+            
+            // Lapisan Tetap (Rangka)
+            for (let i = 0; i < 80; i++) {
+                drawText(i, 80, scale, 'static');
             }
 
-            // Sphere Target Logic
-            const vector = new THREE.Vector3();
-            for (let i = 0, l = objects.length; i < l; i++) {
-                const phi = Math.acos(-1 + (2 * i) / l);
-                const theta = Math.sqrt(l * Math.PI) * phi;
-                const object = new THREE.Object3D();
-                object.position.setFromSphericalCoords(800, phi, theta);
-                vector.copy(object.position).multiplyScalar(2);
-                object.lookAt(vector);
-                targets.sphere.push(object);
-            }
-
-            // Render Setup
-            renderer = new CSS3DRenderer();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            document.getElementById('container').appendChild(renderer.domElement);
-
-            controls = new TrackballControls(camera, renderer.domElement);
-            controls.minDistance = 500;
-            controls.maxDistance = 6000;
-
-            transform(targets.table, 2000);
-
-            // Button Listeners
-            document.getElementById('table').addEventListener('click', () => transform(targets.table, 2000));
-            document.getElementById('sphere').addEventListener('click', () => transform(targets.sphere, 2000));
-        }
-
-        function transform(target, duration) {
-            TWEEN.removeAll();
-            for (let i = 0; i < objects.length; i++) {
-                const object = objects[i];
-                const targetObj = target[i];
-                new TWEEN.Tween(object.position).to({ x: targetObj.position.x, y: targetObj.position.y, z: targetObj.position.z }, Math.random() * duration + duration).easing(TWEEN.Easing.Exponential.InOut).start();
-                new TWEEN.Tween(object.rotation).to({ x: targetObj.rotation.x, y: targetObj.rotation.y, z: targetObj.rotation.z }, Math.random() * duration + duration).easing(TWEEN.Easing.Exponential.InOut).start();
+            // Lapisan Kembang (Spam)
+            for (let i = 0; i < 120; i++) {
+                setTimeout(() => {
+                    drawText(i, 120, scale, 'bloom');
+                }, Math.random() * 3000);
             }
         }
 
-        function animate() {
-            requestAnimationFrame(animate);
-            TWEEN.update();
-            controls.update();
-            renderer.render(scene, camera);
+        function drawText(i, total, scale, className) {
+            const span = document.createElement('span');
+            span.className = `love-text ${className}`;
+            span.innerText = text;
+
+            const angle = (i / total) * 2 * Math.PI;
+            const x = 16 * Math.pow(Math.sin(angle), 3);
+            const y = -(13 * Math.cos(angle) - 5 * Math.cos(2 * angle) - 2 * Math.cos(3 * angle) - Math.cos(4 * angle));
+
+            // Koordinat akhir
+            const targetX = x * scale;
+            const targetY = y * scale;
+
+            span.style.setProperty('--target', `translate(${targetX}px, ${targetY}px)`);
+            span.style.animationDelay = (Math.random() * 3) + "s";
+            
+            heartContainer.appendChild(span);
         }
+
+        createHeart();
+
+        // Elakkan masalah bila orientation berubah
+        let resizeTimer;
+        window.onresize = () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                heartContainer.innerHTML = '';
+                createHeart();
+            }, 250);
+        };
     </script>
 </body>
 </html>
