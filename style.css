@@ -1,0 +1,162 @@
+/* --- TEMA GELAP & NEON --- */
+body {
+    background-color: #0d1117; /* Latar belakang gelap seperti VS Code */
+    color: #c9d1d9;
+    font-family: 'Consolas', 'Courier New', monospace;
+    margin: 0;
+    overflow: hidden;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Kotak Login Sleek & Cyberpunk */
+.container {
+    background-color: #161b22;
+    padding: 40px;
+    border-radius: 8px;
+    border: 1px solid #ff3366; /* Border neon merah jambu */
+    box-shadow: 0 0 20px rgba(255, 51, 102, 0.2);
+    text-align: center;
+    width: 320px;
+    transition: all 0.5s ease;
+    z-index: 10;
+}
+
+h1 {
+    color: #ff3366;
+    margin-bottom: 30px;
+    font-size: 24px;
+    text-shadow: 0 0 8px rgba(255, 51, 102, 0.3);
+}
+
+.input-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 14px;
+    color: #8b949e;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    background-color: #0d1117;
+    color: #c9d1d9;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.3s;
+}
+
+input:focus {
+    outline: none;
+    border-color: #ff3366;
+    box-shadow: 0 0 5px rgba(255, 51, 102, 0.5);
+}
+
+button {
+    width: 100%;
+    background-color: transparent;
+    border: 1px solid #ff3366;
+    color: #ff3366;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 16px;
+    font-weight: bold;
+    margin-top: 10px;
+    transition: all 0.3s ease;
+}
+
+button:hover {
+    background-color: #ff3366;
+    color: #0d1117;
+    box-shadow: 0 0 15px #ff3366;
+}
+
+#message {
+    margin-top: 15px;
+    color: #f85149;
+    font-size: 14px;
+    min-height: 20px;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Skrin Animasi Utama */
+#success-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: #050508; /* Lebih gelap apabila love keluar */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 5;
+}
+
+#heart-wrapper {
+    position: relative;
+    width: 650px;
+    height: 650px;
+}
+
+.main-love-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 3.5rem;
+    color: #ffffff;
+    font-family: 'Arial', sans-serif;
+    font-weight: bold;
+    z-index: 100;
+    margin: 0;
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.6);
+}
+
+/* Teks "i love you" kecil yang membentuk hati */
+.heart-text {
+    position: absolute;
+    font-size: 11px;
+    color: #ff3366;
+    opacity: 0;
+    transform: translate(-50%, -50%);
+    /* Looping berterusan (infinite) */
+    animation: twinkleHeart 3s ease-in-out infinite;
+}
+
+/* --- ANIMASI LOOPING & DEGUPAN --- */
+@keyframes twinkleHeart {
+    0% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.6); 
+    }
+    50% { 
+        opacity: 1; 
+        transform: translate(-50%, -50%) scale(1.1); 
+        text-shadow: 0 0 5px #ff3366;
+    }
+    100% { 
+        opacity: 0; 
+        transform: translate(-50%, -50%) scale(0.6); 
+    }
+}
+
+/* Efek degupan jantung untuk keseluruhan bentuk hati */
+@keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.04); }
+}
