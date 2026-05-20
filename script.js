@@ -29,11 +29,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function generateHeart() {
-        const totalText = 420; // Jumlah perkataan untuk membentuk hati yang padat
+        const totalText = 300; // Dikurangkan sikit supaya tak nampak serabut bila saiz kecil
         const heartWrapperRect = heartWrapper.getBoundingClientRect();
         const centerX = heartWrapperRect.width / 2;
         const centerY = heartWrapperRect.height / 2;
-        const scale = 17; // Saiz kebesaran bentuk hati
+        
+        // UBAH DI SINI: Nilai 'scale' menentukan saiz bentuk hati
+        // Semakin kecil nombor ini, semakin kecil bentuk hati.
+        const scale = 10; 
 
         for (let i = 0; i < totalText; i++) {
             const span = document.createElement('span');
@@ -52,14 +55,14 @@ document.addEventListener('DOMContentLoaded', () => {
             span.style.left = `${finalX}px`;
             span.style.top = `${finalY}px`;
 
-            // Rawakkan delay (0s hingga 3s) supaya kelipan i love you nampak sekata dan tidak serentak (looping)
+            // Rawakkan delay
             const delay = Math.random() * 3;
             span.style.animationDelay = `${delay}s`;
 
             heartWrapper.appendChild(span);
         }
 
-        // Aktifkan animasi berdegup tanpa henti untuk seluruh bentuk hati
+        // Aktifkan animasi berdegup tanpa henti
         heartWrapper.style.animation = "heartbeat 2.5s infinite ease-in-out";
     }
 });
